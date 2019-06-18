@@ -35,30 +35,27 @@ def facial_landmarks(image, shape, colors=None, alpha=0.75):
     overlay = image.copy()
     output = image.copy()
 
-    if colors is None:
-        colors = [(19, 199, 109), (79, 76, 240), (230, 159, 23),
-                  (168, 100, 168), (158, 163, 32),
-                  (163, 38, 32), (180, 42, 220)]
+    jaw9 = 0
+    nose34 = 0
 
-    for (i, name) in enumerate(FACIAL_LANDMARKS_IDXS.keys()):
-        (j, k) = FACIAL_LANDMARKS_IDXS[name]
-        pts = shape[j:k]
+    font = cv2.FONT_HERSHEY_COMPLEX
 
-        facial_feature_coordinates[name] = pts
+    for (name, (i,j)) in face_utils.FACIAL_LANDMARKS_IDXS.items():
+        if name == "nose":
+            nose34 = shape[i:j][3]
 
         if name == "jaw":
-            for l in range(1, len(pts)):
-                ptA = tuple(pts[l - 1])
-                ptB = tuple(pts[l])
-                cv2.line(overlay, ptA, ptB, colors[i], 2)
+            jaw9 = shape[i:j][8]
 
-        else:
-            hull = cv2.convexHull(pts)
-            cv2.drawContours(overlay, [hull], -1, colors[i], -1)
+    cv2.putText(overlay, "Jaw > [X] {0}  [Y] {1}".format(jaw9[0], jaw9[1]), (230,50),font,0.5,(0,255,0))
+
+    cv2.line(overlay, (nose34[0],nose34[1]),
+                      (jaw9[0],jaw9[1]),
+                      (0,255,0))
 
     cv2.addWeighted(overlay, alpha, output, 1 - alpha, 0, output)
 
-    print(facial_feature_coordinates)
+    # print(facial_feature_coordinates)
     return output
 
 while True:
