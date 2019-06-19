@@ -2,6 +2,8 @@ import cv2
 import dlib
 import numpy as np
 
+import math
+
 from imutils import face_utils
 from collections import OrderedDict
 
@@ -47,7 +49,8 @@ def facial_landmarks(image, shape, colors=None, alpha=0.75):
         if name == "jaw":
             jaw9 = shape[i:j][8]
 
-    cv2.putText(overlay, "Jaw > [X] {0}  [Y] {1}".format(jaw9[0], jaw9[1]), (230,50),font,0.5,(0,255,0))
+    distance = math.sqrt((nose34[0] - jaw9[0]) ** 2 + (nose34[1] - jaw9[1]) ** 2)
+    cv2.putText(overlay, "Distance {0}".format(distance), (230,50),font,0.5,(0,255,0))
 
     cv2.line(overlay, (nose34[0],nose34[1]),
                       (jaw9[0],jaw9[1]),
